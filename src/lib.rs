@@ -2,30 +2,7 @@ use tokio::time::{sleep, Duration};
 use tokio::sync::Mutex;
 use std::sync::Arc;
 
-/// A simple debouncer for Rust, using Tokio for async timing.
-///
-/// # Examples
-///
-/// ```rust
-/// use tokio::time::Duration;
-/// use debouncer::Debouncer;
-///
-/// #[tokio::main]
-/// async fn main() {
-///     let debouncer = Debouncer::new(Duration::from_secs(1));
-///
-///     debouncer.call(|| println!("Function called!")).await;
-///     debouncer.call(|| println!("Function called again!")).await;
-///
-///     for _ in 0..5 {
-///         debouncer.call(|| println!("Called multiple times!")).await;
-///         tokio::time::sleep(Duration::from_millis(200)).await;
-///     }
-///
-///     tokio::time::sleep(Duration::from_secs(2)).await;
-///     debouncer.call(|| println!("Final call!")).await;
-/// }
-/// ```
+/// A simple debouncer for Rust, using Tokio for async timing. This debouncer can handle both asynchronous and synchronous closures.
 pub struct Debouncer {
     delay: Duration,
     task: Arc<Mutex<Option<tokio::task::JoinHandle<()>>>>,
@@ -39,9 +16,10 @@ impl Debouncer {
         }
     }
 
-    pub async fn call<F>(&self, f: F)
+    pub async fn call<F, Fut>(&self, f: F)
     where
-        F: FnOnce() + Send + 'static,
+        F: FnOnce() -> Fut + Send + 'static,
+        Fut: std::future::Future<Output = ()> + Send + 'static,
     {
         let mut task = self.task.lock().await;
 
@@ -54,14 +32,15 @@ impl Debouncer {
         let delay = self.delay;
         *task = Some(tokio::spawn(async move {
             sleep(delay).await;
-            f();
+            f().await;
         }));
     }
 }
 
+#[cfg(test)]
 mod tests {
-    
-    
+    use std::{sync::Arc, sync::Mutex, time::Duration};
+    use crate::Debouncer;
 
     #[tokio::test]
     async fn should_call_last_only_test() {
@@ -70,21 +49,27 @@ mod tests {
     
         let counter_clone = Arc::clone(&counter);
         debouncer.call(move || {
-            let mut num = counter_clone.lock().unwrap();
-            *num += 1;
+            async move {
+                let mut num = counter_clone.lock().unwrap();
+                *num += 1;
+            }
         }).await;
     
         let counter_clone = Arc::clone(&counter);
         debouncer.call(move || {
-            let mut num = counter_clone.lock().unwrap();
-            *num += 1;
+            async move {
+                let mut num = counter_clone.lock().unwrap();
+                *num += 1;
+            }
         }).await;
     
         for _ in 0..5 {
             let counter_clone = Arc::clone(&counter);
             debouncer.call(move || {
-                let mut num = counter_clone.lock().unwrap();
-                *num += 1;
+                async move {
+                    let mut num = counter_clone.lock().unwrap();
+                    *num += 1;
+                }
             }).await;
             tokio::time::sleep(Duration::from_millis(200)).await;
         }
@@ -102,21 +87,27 @@ mod tests {
     
         let counter_clone = Arc::clone(&counter);
         debouncer.call(move || {
-            let mut num = counter_clone.lock().unwrap();
-            *num += 1;
+            async move {
+                let mut num = counter_clone.lock().unwrap();
+                *num += 1;
+            }
         }).await;
     
         let counter_clone = Arc::clone(&counter);
         debouncer.call(move || {
-            let mut num = counter_clone.lock().unwrap();
-            *num += 1;
+            async move {
+                let mut num = counter_clone.lock().unwrap();
+                *num += 1;
+            }
         }).await;
     
         for _ in 0..5 {
             let counter_clone = Arc::clone(&counter);
             debouncer.call(move || {
-                let mut num = counter_clone.lock().unwrap();
-                *num += 1;
+                async move {
+                    let mut num = counter_clone.lock().unwrap();
+                    *num += 1;
+                }
             }).await;
             tokio::time::sleep(Duration::from_millis(200)).await;
         }

@@ -22,17 +22,15 @@ use debouncer::Debouncer;
 #[tokio::main]
 async fn main() {
     let debouncer = Debouncer::new(Duration::from_secs(1));
+    let counter = Arc::new(Mutex::new(0));
 
-    debouncer.call(|| println!("Function called!")).await;
-    debouncer.call(|| println!("Function called again!")).await;
-
-    for _ in 0..5 {
-        debouncer.call(|| println!("Called multiple times!")).await;
-        tokio::time::sleep(Duration::from_millis(200)).await;
-    }
-
-    tokio::time::sleep(Duration::from_secs(2)).await;
-    debouncer.call(|| println!("Final call!")).await;
+    let counter_clone = Arc::clone(&counter);
+    debouncer.call(move || {
+        async move {
+            let mut num = counter_clone.lock().unwrap();
+            *num += 1;
+        }
+    }).await;
 }
 ```
 
