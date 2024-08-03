@@ -1,0 +1,10 @@
+[package]
+name = "debouncer"
+version = "0.1.0"
+edition = "2021"
+authors = ["afq0118@gmail.com"]
+description = "A simple debouncer for Rust"
+license = "MIT"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }

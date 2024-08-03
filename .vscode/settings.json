@@ -1,0 +1,20 @@
+{
+    "[rust]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "rust-lang.rust-analyzer"
+      },
+      "rust-analyzer.rustfmt.extraArgs": [
+        "--config",
+        "tab_spaces=4"
+      ],
+      "rust-analyzer.cargo.buildScripts.enable": true,
+      "rust-analyzer.check.command": "clippy",
+      "rust-analyzer.check.extraArgs": [
+        "--",
+        "-A",
+        "clippy::needless_return"
+      ],
+      "rust-analyzer.diagnostics.disabled": [
+        "unnecessary_braces_in_use_statement"
+      ]
+}
