@@ -60,8 +60,8 @@ impl Debouncer {
 }
 
 mod tests {
-    use std::{sync::Arc, sync::Mutex, time::Duration};
-    use crate::Debouncer;
+    
+    
 
     #[tokio::test]
     async fn should_call_last_only_test() {
