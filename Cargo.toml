@@ -1,10 +1,13 @@
 [package]
 name = "debouncer"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["afq0118@gmail.com"]
 description = "A simple debouncer for Rust"
-license = "MIT"
+license = "MIT or Apache-2.0"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
+
+[lib]
+crate-type = ["rlib"]
