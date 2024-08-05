@@ -4,7 +4,7 @@ version = "0.1.2"
 edition = "2021"
 authors = ["afq0118@gmail.com"]
 description = "A simple debouncer for Rust"
-license = "MIT or Apache-2.0"
+license = "MIT"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
