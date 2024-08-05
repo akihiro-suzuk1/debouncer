@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["afq0118@gmail.com"]
 description = "A simple debouncer for Rust"
 license = "MIT"
+repository = "https://github.com/akihiro-suzuk1/debouncer"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
