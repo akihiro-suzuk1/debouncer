@@ -72,22 +72,6 @@ mod tests {
         let debouncer = Debouncer::new(Duration::from_secs(1));
         let counter = Arc::new(Mutex::new(0));
     
-        let counter_clone = Arc::clone(&counter);
-        debouncer.call(move || {
-            async move {
-                let mut num = counter_clone.lock().await;
-                *num += 1;
-            }
-        }).await;
-    
-        let counter_clone = Arc::clone(&counter);
-        debouncer.call(move || {
-            async move {
-                let mut num = counter_clone.lock().await;
-                *num += 1;
-            }
-        }).await;
-    
         for _ in 0..5 {
             let counter_clone = Arc::clone(&counter);
             debouncer.call(move || {
@@ -109,22 +93,6 @@ mod tests {
     async fn should_call_all_if_duration_is_short_test() {
         let debouncer = Debouncer::new(Duration::from_millis(100));
         let counter = Arc::new(Mutex::new(0));
-    
-        let counter_clone = Arc::clone(&counter);
-        debouncer.call(move || {
-            async move {
-                let mut num = counter_clone.lock().await;
-                *num += 1;
-            }
-        }).await;
-    
-        let counter_clone = Arc::clone(&counter);
-        debouncer.call(move || {
-            async move {
-                let mut num = counter_clone.lock().await;
-                *num += 1;
-            }
-        }).await;
     
         for _ in 0..5 {
             let counter_clone = Arc::clone(&counter);
